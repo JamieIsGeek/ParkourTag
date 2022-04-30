@@ -1,5 +1,6 @@
 package dev.jamieisgeek.parkourtag;
 
+import dev.jamieisgeek.parkourtag.Commands.ParkourTagCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,7 +12,7 @@ public final class ParkourTag extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
+        getCommand("pt").setExecutor(new ParkourTagCommand());
 
 
         logger.info("=+=+=+=+=+=+=+=");
