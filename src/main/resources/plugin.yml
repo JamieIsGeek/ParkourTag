@@ -1,0 +1,7 @@
+name: ParkourTag
+version: '${project.version}'
+main: dev.jamieisgeek.parkourtag.ParkourTag
+api-version: 1.18
+authors: [ JamieIsGeek ]
+description:
+  A remix of Noxcrew's MCC Gamemode: Parkour Tag!

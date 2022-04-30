@@ -1,0 +1,7 @@
+Join command - DONE
+If there is more than 3 players waiting in the join queue then start a 30 second countdown before starting the game
+Assign a hunter
+Create a scoreboard listing players in the game, round time, and who the hunter is
+Round time = 5 minutes
+PlayerHitListener - If the player that has been hit isn't the hunter then check if the player that was attacking is the hunter if they are the hunter, eliminate the player
+if there are no more players alive then stop the game otherwise stop the game after 5 minutes and declare the hunter the winner.
