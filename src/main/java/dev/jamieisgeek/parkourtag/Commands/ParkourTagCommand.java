@@ -19,7 +19,7 @@ public class ParkourTagCommand implements CommandExecutor {
             String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ParkourTag" + ChatColor.stripColor("") + ChatColor.WHITE + "] ";
 
             if(args.length != 1) {
-                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end]");
+                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qlist]");
             } else if(args[0].equalsIgnoreCase("join")) {
                 try {
                     PTUtils.joinGame(p, prefix);
@@ -31,6 +31,12 @@ public class ParkourTagCommand implements CommandExecutor {
             } else if(args[0].equalsIgnoreCase("start")) {
                 try {
                     PTUtils.startGame(prefix);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else if(args[0].equalsIgnoreCase("end")) {
+                try {
+                    PTUtils.GameEnd();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
