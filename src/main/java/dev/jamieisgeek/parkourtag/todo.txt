@@ -1,20 +1,7 @@
 Join command - DONE
-If there is more than 3 players waiting in the join queue then start a 30 second countdown before starting the game
-Assign a hunter
-Create a scoreboard listing players in the game, round time, and who the hunter is
+If there is more than 3 players waiting in the join queue then start a 30 second countdown before starting the game - DONE
+Assign a hunter - DONE
+Create a scoreboard listing players in the game, round time, and who the hunter is - DONE
 Round time = 5 minutes
-PlayerHitListener - If the player that has been hit isn't the hunter then check if the player that was attacking is the hunter if they are the hunter, eliminate the player
+PlayerHitListener - If the player that has been hit isn't the hunter then check if the player that was attacking is the hunter if they are the hunter, eliminate the player - DONE
 if there are no more players alive then stop the game otherwise stop the game after 5 minutes and declare the hunter the winner.
-
-
-if(joinedPlayers.contains(p.getDisplayName())) {
-            p.sendMessage(prefix + ChatColor.WHITE + "You are already in the queue for this game!");
-        } else {
-            joinedPlayers.add(p.getDisplayName());
-            p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
-
-            if(joinedPlayers.size() > 3) {
-                TimeUnit.SECONDS.sleep(60);
-                PTUtils.startGame(prefix);
-            }
-        }

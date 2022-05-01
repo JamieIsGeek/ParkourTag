@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scoreboard.*;
+import javax.swing.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +21,10 @@ public class PTUtils implements Listener {
 
     public static ArrayList<String> joinedPlayers = new ArrayList<>();
     public static ArrayList<String> alivePlayers = new ArrayList<>();
-    public Player hunter;
+    public Player hunter = null;
     public HashMap<String, String> roles = new HashMap<>();
-    public String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ParkourTag" + ChatColor.stripColor("") + ChatColor.WHITE + "] ";
+    public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ParkourTag" + ChatColor.stripColor("") + ChatColor.WHITE + "] ";
+    public static int timerLength = 300000;
 
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
@@ -79,9 +81,10 @@ public class PTUtils implements Listener {
                 }
             }
 
+            Timer timer = new Timer(timerLength, null);
 
             // Create the scoreboard!
-
+            int players = joinedPlayers.size() - 1;
             for(int i = 0; i < joinedPlayers.size(); i++) {
 
                 Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
@@ -93,12 +96,18 @@ public class PTUtils implements Listener {
                     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
-                    Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + joinedPlayers.size());
+                    Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
+                    Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                    Score empty = objective.getScore("");
+                    Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "HUNTER");
 
-                    roleScore.setScore(2);
-                    hunterScore.setScore(1);
-                    inGameScore.setScore(0);
+                    roleScore.setScore(5);
+                    hunterScore.setScore(4);
+                    inGameScore.setScore(3);
+                    timerScore.setScore(2);
+                    empty.setScore(1);
+                    status.setScore(0);
 
                     p.setScoreboard(scoreboard);
                 } else {
@@ -108,12 +117,18 @@ public class PTUtils implements Listener {
                     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
-                    Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + joinedPlayers.size());
+                    Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
+                    Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                    Score empty = objective.getScore("");
+                    Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
-                    roleScore.setScore(2);
-                    hunterScore.setScore(1);
-                    inGameScore.setScore(0);
+                    roleScore.setScore(5);
+                    hunterScore.setScore(4);
+                    inGameScore.setScore(3);
+                    timerScore.setScore(2);
+                    empty.setScore(1);
+                    status.setScore(0);
 
                     p.setScoreboard(scoreboard);
                 }
@@ -140,24 +155,51 @@ public class PTUtils implements Listener {
                 GameState gameState = GameState.ACTIVE;
                 p.sendMessage(prefix + ChatColor.WHITE + "Start!");
             }
+            timer.setRepeats(false);
+            timer.start();
+
+            while(!(alivePlayers.isEmpty())) {
+                if(timer.isRunning() == false) {
+                    PTUtils.GameEnd();
+                }
+            }
+
+            if(alivePlayers.isEmpty()) {
+                PTUtils.GameEnd();
+            }
+
         } else {
             GameState gameState = GameState.LOBBY;
             System.out.println("There are not enough players to start the game!");
         }
     }
 
+    public static void GameEnd() throws InterruptedException {
+        for(int i = 0; i < joinedPlayers.size(); i++) {
+            Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+
+            p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
+            TimeUnit.SECONDS.sleep(2);
+            p.sendMessage(prefix + ChatColor.WHITE + "Runners win!");
+            p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
+            // Teleport player back to the lobby!
+        }
+
+    }
+
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent e) {
         if(e.getDamager().getType() == EntityType.PLAYER) {
+            e.setCancelled(true);
             Player attacker = (Player) e.getDamager();
 
             if(e.getEntity().getType() == EntityType.PLAYER) {
                 Player attacked = (Player) e.getEntity();
 
                 if(attacker == Bukkit.getPlayerExact(roles.get("Hunter"))) {
-                    e.setCancelled(true);
-
                     attacked.setGameMode(GameMode.SPECTATOR);
+                    alivePlayers.remove(attacked.getDisplayName());
+
                     for(int i = 0; i < joinedPlayers.size(); i++) {
                         String playerName = joinedPlayers.get(i);
                         Player p = Bukkit.getPlayerExact(playerName);
