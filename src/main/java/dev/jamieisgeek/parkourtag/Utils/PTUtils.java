@@ -23,9 +23,8 @@ public class PTUtils {
             p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
 
             if(joinedPlayers.size() > 3) {
+                TimeUnit.SECONDS.sleep(60);
                 PTUtils.startGame(prefix);
-            } else {
-                return;
             }
         }
 
@@ -41,10 +40,10 @@ public class PTUtils {
         String hunterBefore = joinedPlayers.get(random);
         Player hunter = Bukkit.getPlayerExact(hunterBefore);
 
-        HashMap<String, String> roles = new HashMap<String, String>();
+        HashMap<String, String> roles = new HashMap<>();
 
         for(int i = 0; i < joinedPlayers.size(); i++) {
-            if(joinedPlayers.get(i) == hunter.getDisplayName()) {
+            if(joinedPlayers.get(i).equals(hunter.getDisplayName())) {
                 roles.put("Hunter", hunter.getDisplayName());
             } else {
                 roles.put(joinedPlayers.get(i), "Runner");
@@ -58,7 +57,7 @@ public class PTUtils {
 
             Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
 
-            if(p.getDisplayName() == roles.get("Hunter")) {
+            if(p.getDisplayName().equals(roles.get("Hunter"))) {
                 ScoreboardManager manager = Bukkit.getScoreboardManager();
                 Scoreboard scoreboard = manager.getNewScoreboard();
                 Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");

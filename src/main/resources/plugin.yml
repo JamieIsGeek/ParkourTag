@@ -5,6 +5,9 @@ api-version: 1.18
 authors: [ JamieIsGeek ]
 description: A remix of Noxcrew's Parkour Tag Game!
 commands:
-  pt:
+  parkourtag:
     description: Main command for Parkour Tag!
     usage: /<command> <args>
+    aliases:
+      - parkour
+      - pkt

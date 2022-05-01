@@ -12,7 +12,7 @@ public final class ParkourTag extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getCommand("pt").setExecutor(new ParkourTagCommand());
+        getCommand("parkourtag").setExecutor(new ParkourTagCommand());
 
 
         logger.info("=+=+=+=+=+=+=+=");
