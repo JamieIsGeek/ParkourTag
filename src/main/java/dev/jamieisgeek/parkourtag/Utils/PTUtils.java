@@ -12,19 +12,29 @@ import java.util.concurrent.TimeUnit;
 
 public class PTUtils {
 
-    public static ArrayList<String> joinedPlayers;
+    public static ArrayList<String> joinedPlayers = new ArrayList<>();
 
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
-        if(joinedPlayers.contains(p.getDisplayName())) {
-            p.sendMessage(prefix + ChatColor.WHITE + "You are already in the queue for this game!");
-        } else {
+        if(joinedPlayers.isEmpty()) {
             joinedPlayers.add(p.getDisplayName());
             p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
 
             if(joinedPlayers.size() > 3) {
-                TimeUnit.SECONDS.sleep(60);
+                TimeUnit.SECONDS.sleep(5);
                 PTUtils.startGame(prefix);
+            }
+        } else {
+            if(joinedPlayers.contains(p.getDisplayName())) {
+                p.sendMessage(prefix + ChatColor.WHITE + "You are already in the queue for this game!");
+            } else {
+                joinedPlayers.add(p.getDisplayName());
+                p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
+
+                if(joinedPlayers.size() > 3) {
+                    TimeUnit.SECONDS.sleep(60);
+                    PTUtils.startGame(prefix);
+                }
             }
         }
 
