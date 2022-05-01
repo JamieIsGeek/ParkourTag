@@ -26,6 +26,14 @@ public class ParkourTagCommand implements CommandExecutor {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            } else if(args[0].equalsIgnoreCase("qlist")) {
+                PTUtils.listPlayers(prefix, p);
+            } else if(args[0].equalsIgnoreCase("start")) {
+                try {
+                    PTUtils.startGame(prefix);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             Logger logger = Bukkit.getLogger();
