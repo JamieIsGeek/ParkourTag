@@ -185,6 +185,8 @@ public class PTUtils implements Listener {
             // Teleport player back to the lobby!
         }
 
+        joinedPlayers.clear();
+        alivePlayers.clear();
     }
 
     @EventHandler
