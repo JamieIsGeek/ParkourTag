@@ -47,10 +47,16 @@ public class PTUtils implements Listener {
                 alivePlayers.add(p.getDisplayName());
                 p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
 
-                if(joinedPlayers.size() > 3) {
-                    TimeUnit.SECONDS.sleep(5);
+                if(joinedPlayers.size() >= 3) {
+
+
+                    for(int i = 0; i < joinedPlayers.size(); i++) {
+                        Player player = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                        player.sendMessage(prefix + "The game is starting momentarily");
+                    }
+
                     GameState gameState = GameState.STARTING;
-                    PTUtils.startGame(prefix);
+                    startGame(prefix);
                 }
             }
         }
@@ -58,7 +64,11 @@ public class PTUtils implements Listener {
     }
 
     public static void listPlayers(String prefix, Player p) {
-        p.sendMessage(prefix + ChatColor.WHITE + joinedPlayers.toString());
+        String playersJoined1 = joinedPlayers.toString().replace("[", "");
+        String playersJoined2 = playersJoined1.replace("]", "");
+        String playersJoined = playersJoined2.replace(" ", ", ");
+
+        p.sendMessage(prefix + ChatColor.WHITE + playersJoined);
     }
 
     public static void startGame(String prefix) throws InterruptedException {
@@ -98,14 +108,12 @@ public class PTUtils implements Listener {
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
-                    //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                     Score empty = objective.getScore("");
                     Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
                     inGameScore.setScore(3);
-                    //timerScore.setScore(2);
                     empty.setScore(1);
                     status.setScore(0);
 
@@ -119,14 +127,12 @@ public class PTUtils implements Listener {
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
-                    //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                     Score empty = objective.getScore("");
                     Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
                     inGameScore.setScore(3);
-                    //timerScore.setScore(2);
                     empty.setScore(1);
                     status.setScore(0);
 
@@ -156,26 +162,13 @@ public class PTUtils implements Listener {
             timer.setRepeats(false);
             timer.start();
 
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-            executorService.scheduleAtFixedRate(() -> {
-                if(alivePlayers.isEmpty()) {
-                    try {
-                        PTUtils.GameEnd();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } else if(timer.isRunning() == false) {
-                    try {
-                        PTUtils.GameEnd();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, 1000L, 1000L, TimeUnit.MILLISECONDS);
+            while(!(alivePlayers.isEmpty())) {
+            }
+
+            GameEnd();
 
         } else {
             GameState gameState = GameState.LOBBY;
-            System.out.println("There are not enough players to start the game!");
         }
     }
 
@@ -188,6 +181,7 @@ public class PTUtils implements Listener {
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
                 TimeUnit.SECONDS.sleep(2);
                 p.sendMessage(prefix + ChatColor.WHITE + "Runners win!");
+                TimeUnit.SECONDS.sleep((long) 1.5);
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
             } else {
                 Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
@@ -239,14 +233,12 @@ public class PTUtils implements Listener {
                             Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                             Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                             Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
-                            //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                             Score empty = objective.getScore("");
                             Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                             roleScore.setScore(5);
                             hunterScore.setScore(4);
                             inGameScore.setScore(3);
-                            //timerScore.setScore(2);
                             empty.setScore(1);
                             status.setScore(0);
 
@@ -260,14 +252,12 @@ public class PTUtils implements Listener {
                             Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                             Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                             Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
-                            //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                             Score empty = objective.getScore("");
                             Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                             roleScore.setScore(5);
                             hunterScore.setScore(4);
                             inGameScore.setScore(3);
-                            //timerScore.setScore(2);
                             empty.setScore(1);
                             status.setScore(0);
 
