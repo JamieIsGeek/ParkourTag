@@ -15,6 +15,8 @@ import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PTUtils implements Listener {
@@ -100,7 +102,7 @@ public class PTUtils implements Listener {
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
                     Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                     Score empty = objective.getScore("");
-                    Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "HUNTER");
+                    Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
@@ -158,15 +160,22 @@ public class PTUtils implements Listener {
             timer.setRepeats(false);
             timer.start();
 
-            while(!(alivePlayers.isEmpty())) {
-                if(timer.isRunning() == false) {
-                    PTUtils.GameEnd();
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+            executorService.scheduleAtFixedRate(() -> {
+                if(alivePlayers.isEmpty()) {
+                    try {
+                        PTUtils.GameEnd();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else if(timer.isRunning() == false) {
+                    try {
+                        PTUtils.GameEnd();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-
-            if(alivePlayers.isEmpty()) {
-                PTUtils.GameEnd();
-            }
+            }, 1000L, 1000L, TimeUnit.MILLISECONDS);
 
         } else {
             GameState gameState = GameState.LOBBY;
@@ -176,13 +185,23 @@ public class PTUtils implements Listener {
 
     public static void GameEnd() throws InterruptedException {
         for(int i = 0; i < joinedPlayers.size(); i++) {
-            Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+            if(alivePlayers.size() > 0) {
+                Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
 
-            p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
-            TimeUnit.SECONDS.sleep(2);
-            p.sendMessage(prefix + ChatColor.WHITE + "Runners win!");
-            p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
-            // Teleport player back to the lobby!
+                p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
+                TimeUnit.SECONDS.sleep(2);
+                p.sendMessage(prefix + ChatColor.WHITE + "Runners win!");
+                p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
+            } else {
+                Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+
+                p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
+                TimeUnit.SECONDS.sleep(2);
+                p.sendMessage(prefix + ChatColor.WHITE + "The Hunter wins!");
+                TimeUnit.SECONDS.sleep(4);
+                p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
+                // Teleport player back to the lobby!
+            }
         }
 
         joinedPlayers.clear();
