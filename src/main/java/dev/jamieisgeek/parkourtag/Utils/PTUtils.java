@@ -24,7 +24,7 @@ public class PTUtils implements Listener {
     public static ArrayList<String> joinedPlayers = new ArrayList<>();
     public static ArrayList<String> alivePlayers = new ArrayList<>();
     public Player hunter = null;
-    public HashMap<String, String> roles = new HashMap<>();
+    public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ParkourTag" + ChatColor.stripColor("") + ChatColor.WHITE + "] ";
     public static int timerLength = 300000;
 
@@ -73,8 +73,6 @@ public class PTUtils implements Listener {
             Player hunter = Bukkit.getPlayerExact(hunterBefore);
             alivePlayers.remove(hunterBefore);
 
-            HashMap<String, String> roles = new HashMap<>();
-
             for(int i = 0; i < joinedPlayers.size(); i++) {
                 if(joinedPlayers.get(i).equals(hunter.getDisplayName())) {
                     roles.put("Hunter", hunter.getDisplayName());
@@ -100,14 +98,14 @@ public class PTUtils implements Listener {
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
-                    Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                    //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                     Score empty = objective.getScore("");
                     Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
                     inGameScore.setScore(3);
-                    timerScore.setScore(2);
+                    //timerScore.setScore(2);
                     empty.setScore(1);
                     status.setScore(0);
 
@@ -121,14 +119,14 @@ public class PTUtils implements Listener {
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
-                    Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                    //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
                     Score empty = objective.getScore("");
                     Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
                     inGameScore.setScore(3);
-                    timerScore.setScore(2);
+                    //timerScore.setScore(2);
                     empty.setScore(1);
                     status.setScore(0);
 
@@ -136,7 +134,7 @@ public class PTUtils implements Listener {
                 }
             }
 
-            TimeUnit.SECONDS.sleep(5);
+            //TimeUnit.SECONDS.sleep(5);
             for(int i = 0; i < joinedPlayers.size(); i++) {
                 String playerName = joinedPlayers.get(i);
                 Player p = Bukkit.getPlayerExact(playerName);
@@ -147,8 +145,6 @@ public class PTUtils implements Listener {
                 p.sendMessage(prefix + ChatColor.WHITE + "4");
                 TimeUnit.SECONDS.sleep(1);
                 p.sendMessage(prefix + ChatColor.WHITE + "3");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "2");
                 TimeUnit.SECONDS.sleep(1);
                 p.sendMessage(prefix + ChatColor.WHITE + "2");
                 TimeUnit.SECONDS.sleep(1);
@@ -187,6 +183,7 @@ public class PTUtils implements Listener {
         for(int i = 0; i < joinedPlayers.size(); i++) {
             if(alivePlayers.size() > 0) {
                 Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
                 TimeUnit.SECONDS.sleep(2);
@@ -194,6 +191,7 @@ public class PTUtils implements Listener {
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
             } else {
                 Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
                 TimeUnit.SECONDS.sleep(2);
@@ -210,22 +208,71 @@ public class PTUtils implements Listener {
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent e) {
+        e.setCancelled(true);
+
         if(e.getDamager().getType() == EntityType.PLAYER) {
-            e.setCancelled(true);
             Player attacker = (Player) e.getDamager();
 
             if(e.getEntity().getType() == EntityType.PLAYER) {
                 Player attacked = (Player) e.getEntity();
 
-                if(attacker == Bukkit.getPlayerExact(roles.get("Hunter"))) {
+                if(attacker.getDisplayName().equalsIgnoreCase(roles.get("Hunter"))) {
                     attacked.setGameMode(GameMode.SPECTATOR);
                     alivePlayers.remove(attacked.getDisplayName());
+
+
 
                     for(int i = 0; i < joinedPlayers.size(); i++) {
                         String playerName = joinedPlayers.get(i);
                         Player p = Bukkit.getPlayerExact(playerName);
+                        int players = joinedPlayers.size() - 1;
 
                         p.sendMessage(prefix + ChatColor.RED + attacked.getDisplayName() + ChatColor.WHITE + " has been " + ChatColor.BOLD + "" + ChatColor.RED + "eliminated" + ChatColor.stripColor("") + ChatColor.WHITE + "!");
+
+
+                        if(p.getDisplayName().equalsIgnoreCase(roles.get("Hunter"))) {
+                            ScoreboardManager manager = Bukkit.getScoreboardManager();
+                            Scoreboard scoreboard = manager.getNewScoreboard();
+                            Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+                            Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
+                            Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
+                            Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
+                            //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                            Score empty = objective.getScore("");
+                            Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
+
+                            roleScore.setScore(5);
+                            hunterScore.setScore(4);
+                            inGameScore.setScore(3);
+                            //timerScore.setScore(2);
+                            empty.setScore(1);
+                            status.setScore(0);
+
+                            p.setScoreboard(scoreboard);
+                        } else {
+                            ScoreboardManager manager = Bukkit.getScoreboardManager();
+                            Scoreboard scoreboard = manager.getNewScoreboard();
+                            Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+                            Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
+                            Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
+                            Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
+                            //Score timerScore = objective.getScore(ChatColor.RED + "Time Remaining: " + ChatColor.WHITE + timer);
+                            Score empty = objective.getScore("");
+                            Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
+
+                            roleScore.setScore(5);
+                            hunterScore.setScore(4);
+                            inGameScore.setScore(3);
+                            //timerScore.setScore(2);
+                            empty.setScore(1);
+                            status.setScore(0);
+
+                            p.setScoreboard(scoreboard);
+                        }
                     }
                 }
             }

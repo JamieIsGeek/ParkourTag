@@ -27,18 +27,30 @@ public class ParkourTagCommand implements CommandExecutor {
                     e.printStackTrace();
                 }
             } else if(args[0].equalsIgnoreCase("qlist")) {
-                PTUtils.listPlayers(prefix, p);
+                if(p.hasPermission("pkt.qlist")) {
+                    PTUtils.listPlayers(prefix, p);
+                } else {
+                    p.sendMessage(prefix + "Missing Permission: pkt.qlist");
+                }
             } else if(args[0].equalsIgnoreCase("start")) {
-                try {
-                    PTUtils.startGame(prefix);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(p.hasPermission("pkt.forcestart")) {
+                    try {
+                        PTUtils.startGame(prefix);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    p.sendMessage(prefix + "Missing Permission: pkt.forcestart");
                 }
             } else if(args[0].equalsIgnoreCase("end")) {
-                try {
-                    PTUtils.GameEnd();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(p.hasPermission("pkt.forceend")) {
+                    try {
+                        PTUtils.GameEnd();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    p.sendMessage(prefix + "Missing Permission: pkt.forceend");
                 }
             }
         } else {
