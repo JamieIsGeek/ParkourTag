@@ -18,19 +18,24 @@ public final class ParkourTag extends JavaPlugin {
         getCommand("parkourtag").setExecutor(new ParkourTagCommand());
         getServer().getPluginManager().registerEvents(new PTUtils(), this);
 
-
-        logger.info("=+=+=+=+=+=+=+=");
+        logger.info("");
+        logger.info("=+=+=+=+=+=+=+=+=+=+=+=+=+=");
         logger.info("ParkourTag has Enabled!");
         logger.info("Version: 1.0");
-        logger.info("=+=+=+=+=+=+=+=");
+        logger.info("=+=+=+=+=+=+=+=+=+=+=+=+=+=");
+        logger.info("");
 
     }
 
     @Override
     public void onDisable() {
-        logger.info("=+=+=+=+=+=+=+=");
+        logger.info("");
+        logger.info("=+=+=+=+=+=+=+=+=+=+=+=+=+=");
         logger.info("ParkourTag has Disabled!");
         logger.info("Version: 1.0");
-        logger.info("=+=+=+=+=+=+=+=");
+        logger.info("=+=+=+=+=+=+=+=+=+=+=+=+=+=");
+        logger.info("");
+
     }
+
 }
