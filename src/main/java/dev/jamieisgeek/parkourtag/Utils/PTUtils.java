@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.*;
 import javax.swing.Timer;
 
@@ -198,6 +199,34 @@ public class PTUtils implements Listener {
 
         joinedPlayers.clear();
         alivePlayers.clear();
+    }
+
+    public static void leaveQueue(String prefix, Player p) {
+        if(joinedPlayers.contains(p.getDisplayName())) {
+            joinedPlayers.remove(p.getDisplayName());
+
+            if(alivePlayers.contains(p.getDisplayName())) {
+                p.sendMessage(prefix + "You are unable to leave during a game!");
+            } else {
+                p.sendMessage(prefix + "You left the queue!");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        if(joinedPlayers.contains(e.getPlayer().getDisplayName())) {
+            joinedPlayers.remove(e.getPlayer().getDisplayName());
+            if(alivePlayers.contains(e.getPlayer().getDisplayName())) {
+                alivePlayers.remove(e.getPlayer().getDisplayName());
+
+                for(int i = 0; i < joinedPlayers.size(); i++) {
+                    Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+
+                    p.sendMessage(prefix + e.getPlayer().getDisplayName() + " has left the game!");
+                }
+            }
+        }
     }
 
     @EventHandler
