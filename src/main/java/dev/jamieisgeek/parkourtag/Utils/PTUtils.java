@@ -1,23 +1,20 @@
 package dev.jamieisgeek.parkourtag.Utils;
 
-import dev.jamieisgeek.parkourtag.Managers.GameState;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scoreboard.*;
 import javax.swing.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PTUtils implements Listener {
@@ -26,7 +23,7 @@ public class PTUtils implements Listener {
     public static ArrayList<String> alivePlayers = new ArrayList<>();
     public Player hunter = null;
     public static HashMap<String, String> roles = new HashMap<>();
-    public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "ParkourTag" + ChatColor.stripColor("") + ChatColor.WHITE + "] ";
+    public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static int timerLength = 300000;
 
     public static void joinGame(Player p, String prefix) throws InterruptedException {
@@ -56,7 +53,6 @@ public class PTUtils implements Listener {
                         player.sendMessage(prefix + "The game is starting momentarily");
                     }
 
-                    GameState gameState = GameState.STARTING;
                     startGame(prefix);
                 }
             }
@@ -157,7 +153,6 @@ public class PTUtils implements Listener {
                 TimeUnit.SECONDS.sleep(1);
                 p.sendMessage(prefix + ChatColor.WHITE + "1");
                 TimeUnit.SECONDS.sleep(1);
-                GameState gameState = GameState.ACTIVE;
                 p.sendMessage(prefix + ChatColor.WHITE + "Start!");
             }
             timer.setRepeats(false);
@@ -168,8 +163,6 @@ public class PTUtils implements Listener {
 
             GameEnd();
 
-        } else {
-            GameState gameState = GameState.LOBBY;
         }
     }
 
@@ -242,7 +235,15 @@ public class PTUtils implements Listener {
                 if(attacker.getDisplayName().equalsIgnoreCase(roles.get("Hunter"))) {
                     attacked.setGameMode(GameMode.SPECTATOR);
                     alivePlayers.remove(attacked.getDisplayName());
+                    Location deathLoc = attacked.getLocation();
 
+
+                    Firework fw = (Firework) deathLoc.getWorld().spawnEntity(deathLoc, EntityType.FIREWORK);
+                    FireworkMeta fwm = fw.getFireworkMeta();
+                    fwm.setPower(2);
+                    fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
+                    fw.setFireworkMeta(fwm);
+                    fw.detonate();
 
 
                     for(int i = 0; i < joinedPlayers.size(); i++) {
