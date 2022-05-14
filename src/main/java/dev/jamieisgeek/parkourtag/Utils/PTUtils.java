@@ -263,14 +263,10 @@ public class PTUtils implements Listener {
                             Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                             Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                             Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
-                            Score empty = objective.getScore("");
-                            Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                             roleScore.setScore(5);
                             hunterScore.setScore(4);
                             inGameScore.setScore(3);
-                            empty.setScore(1);
-                            status.setScore(0);
 
                             p.setScoreboard(scoreboard);
                         } else {
@@ -282,14 +278,10 @@ public class PTUtils implements Listener {
                             Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
                             Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                             Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
-                            Score empty = objective.getScore("");
-                            Score status = objective.getScore(ChatColor.RED + "Status: " + ChatColor.WHITE + "Alive");
 
                             roleScore.setScore(5);
                             hunterScore.setScore(4);
                             inGameScore.setScore(3);
-                            empty.setScore(1);
-                            status.setScore(0);
 
                             p.setScoreboard(scoreboard);
                         }
