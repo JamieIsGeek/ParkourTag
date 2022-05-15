@@ -10,7 +10,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scoreboard.*;
-import javax.swing.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +22,7 @@ public class PTUtils implements Listener {
     public static ArrayList<String> alivePlayers = new ArrayList<>();
     public Player hunter = null;
     public static HashMap<String, String> roles = new HashMap<>();
-    public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
-    public static int timerLength = 300000;
+    public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
 
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
@@ -33,10 +31,6 @@ public class PTUtils implements Listener {
             alivePlayers.add(p.getDisplayName());
             p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
 
-            if(joinedPlayers.size() > 3) {
-                TimeUnit.SECONDS.sleep(5);
-                PTUtils.startGame(prefix);
-            }
         } else {
             if(joinedPlayers.contains(p.getDisplayName())) {
                 p.sendMessage(prefix + ChatColor.WHITE + "You are already in the queue for this game!");
@@ -48,12 +42,12 @@ public class PTUtils implements Listener {
                 if(joinedPlayers.size() >= 3) {
 
 
-                    for(int i = 0; i < joinedPlayers.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                    for (String joinedPlayer : joinedPlayers) {
+                        Player player = Bukkit.getPlayerExact(joinedPlayer);
                         player.sendMessage(prefix + "The game is starting momentarily");
                     }
 
-                    startGame(prefix);
+                    startGame();
                 }
             }
         }
@@ -68,7 +62,7 @@ public class PTUtils implements Listener {
         p.sendMessage(prefix + ChatColor.WHITE + playersJoined);
     }
 
-    public static void startGame(String prefix) throws InterruptedException {
+    public static void startGame() throws InterruptedException {
         if(joinedPlayers.size() > 1) {
             /*
             Teleport players to the arena - Don't start until 5 seconds after the hunter has been chosen!
@@ -80,26 +74,24 @@ public class PTUtils implements Listener {
             Player hunter = Bukkit.getPlayerExact(hunterBefore);
             alivePlayers.remove(hunterBefore);
 
-            for(int i = 0; i < joinedPlayers.size(); i++) {
-                if(joinedPlayers.get(i).equals(hunter.getDisplayName())) {
+            for (String joinedPlayer : joinedPlayers) {
+                if (joinedPlayer.equals(hunter.getDisplayName())) {
                     roles.put("Hunter", hunter.getDisplayName());
                 } else {
-                    roles.put(joinedPlayers.get(i), "Runner");
+                    roles.put(joinedPlayer, "Runner");
                 }
             }
 
-            Timer timer = new Timer(timerLength, null);
-
             // Create the scoreboard!
             int players = joinedPlayers.size() - 1;
-            for(int i = 0; i < joinedPlayers.size(); i++) {
+            for (String joinedPlayer : joinedPlayers) {
 
-                Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                Player p = Bukkit.getPlayerExact(joinedPlayer);
 
-                if(p.getDisplayName().equals(roles.get("Hunter"))) {
+                if (p.getDisplayName().equals(roles.get("Hunter"))) {
                     ScoreboardManager manager = Bukkit.getScoreboardManager();
                     Scoreboard scoreboard = manager.getNewScoreboard();
-                    Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                    Objective objective = scoreboard.registerNewObjective("main", "dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
                     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
@@ -114,7 +106,7 @@ public class PTUtils implements Listener {
                 } else {
                     ScoreboardManager manager = Bukkit.getScoreboardManager();
                     Scoreboard scoreboard = manager.getNewScoreboard();
-                    Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                    Objective objective = scoreboard.registerNewObjective("main", "dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
                     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
                     Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
@@ -129,26 +121,13 @@ public class PTUtils implements Listener {
                 }
             }
 
-            //TimeUnit.SECONDS.sleep(5);
-            for(int i = 0; i < joinedPlayers.size(); i++) {
-                String playerName = joinedPlayers.get(i);
+            for (String playerName : joinedPlayers) {
                 Player p = Bukkit.getPlayerExact(playerName);
 
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "5");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "4");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "3");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "2");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "1");
-                TimeUnit.SECONDS.sleep(1);
-                p.sendMessage(prefix + ChatColor.WHITE + "Start!");
+                p.sendMessage(ChatColor.WHITE + "Welcome to Parkour Tag!\nThis gamemode is simple, run from the hunter while doing parkour!\nA random player has been declared as the 'Hunter' you must run away from them and not get hit!\n");
+
+
             }
-            timer.setRepeats(false);
-            timer.start();
 
             while(!(alivePlayers.isEmpty())) {
             }
@@ -159,9 +138,9 @@ public class PTUtils implements Listener {
     }
 
     public static void GameEnd() throws InterruptedException {
-        for(int i = 0; i < joinedPlayers.size(); i++) {
-            if(alivePlayers.size() > 0) {
-                Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+        for (String joinedPlayer : joinedPlayers) {
+            if (alivePlayers.size() > 0) {
+                Player p = Bukkit.getPlayerExact(joinedPlayer);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
@@ -170,13 +149,13 @@ public class PTUtils implements Listener {
                 TimeUnit.SECONDS.sleep((long) 1.5);
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
             } else {
-                Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                Player p = Bukkit.getPlayerExact(joinedPlayer);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
                 TimeUnit.SECONDS.sleep(2);
                 p.sendMessage(prefix + ChatColor.WHITE + "The Hunter wins!");
-                TimeUnit.SECONDS.sleep(4);
+                TimeUnit.SECONDS.sleep((long) 1.5);
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
                 // Teleport player back to the lobby!
             }
@@ -205,8 +184,8 @@ public class PTUtils implements Listener {
             if(alivePlayers.contains(e.getPlayer().getDisplayName())) {
                 alivePlayers.remove(e.getPlayer().getDisplayName());
 
-                for(int i = 0; i < joinedPlayers.size(); i++) {
-                    Player p = Bukkit.getPlayerExact(joinedPlayers.get(i));
+                for (String joinedPlayer : joinedPlayers) {
+                    Player p = Bukkit.getPlayerExact(joinedPlayer);
 
                     p.sendMessage(prefix + e.getPlayer().getDisplayName() + " has left the game!");
                 }

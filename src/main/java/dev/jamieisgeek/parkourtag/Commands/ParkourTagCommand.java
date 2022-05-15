@@ -35,7 +35,7 @@ public class ParkourTagCommand implements CommandExecutor {
             } else if(args[0].equalsIgnoreCase("start")) {
                 if(p.hasPermission("pkt.forcestart")) {
                     try {
-                        PTUtils.startGame(prefix);
+                        PTUtils.startGame();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
