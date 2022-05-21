@@ -26,12 +26,14 @@ public class ParkourTagCommand implements CommandExecutor {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
             } else if(args[0].equalsIgnoreCase("qlist")) {
                 if(p.hasPermission("pkt.qlist")) {
                     PTUtils.listPlayers(prefix, p);
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.qlist");
                 }
+
             } else if(args[0].equalsIgnoreCase("start")) {
                 if(p.hasPermission("pkt.forcestart")) {
                     try {
@@ -39,9 +41,11 @@ public class ParkourTagCommand implements CommandExecutor {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.forcestart");
                 }
+
             } else if(args[0].equalsIgnoreCase("end")) {
                 if(p.hasPermission("pkt.forceend")) {
                     try {
@@ -49,9 +53,11 @@ public class ParkourTagCommand implements CommandExecutor {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.forceend");
                 }
+
             } else if(args[0].equalsIgnoreCase("qleave")) {
                 if(p.hasPermission("pkt.qleave")) {
                     PTUtils.leaveQueue(prefix, p);
@@ -59,6 +65,8 @@ public class ParkourTagCommand implements CommandExecutor {
                     p.sendMessage(prefix + "Missing Permission: pkt.qleave");
                 }
             }
+
+
         } else {
             Logger logger = Bukkit.getLogger();
             logger.warning("You must run this command in-game!");
