@@ -12,16 +12,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-import static org.bukkit.Bukkit.getServer;
-
 public class PTUtils implements Listener {
 
     public static ArrayList<String> joinedPlayers = new ArrayList<>();
@@ -30,7 +26,6 @@ public class PTUtils implements Listener {
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
-    public static int startTimer = 6;
     public static boolean inProgress = false;
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
@@ -48,12 +43,10 @@ public class PTUtils implements Listener {
                 p.sendMessage(prefix + ChatColor.WHITE + "Joined the queue!");
 
                 if(joinedPlayers.size() >= 3) {
-
-
-                    for (String joinedPlayer : joinedPlayers) {
-                        Player player = Bukkit.getPlayerExact(joinedPlayer);
-                        player.sendMessage(prefix + "The game is starting momentarily");
-                    }
+                    joinedPlayers.forEach((String playerName) -> {
+                        Player player = Bukkit.getPlayerExact(playerName);
+                        player.sendMessage(prefix + "The game will start momentarily");
+                    });
 
                     startGame();
                 }
@@ -147,19 +140,20 @@ public class PTUtils implements Listener {
 
             }
             TimeUnit.SECONDS.sleep(5);
-            GameInProgress(startTimer, inProgress);
+            GameInProgress(inProgress);
         }
     }
 
-    public static void GameInProgress(int startTimer, boolean inProgress) {
+    public static void GameInProgress(boolean inProgress) {
+        final int[] startTimer = {6};
         for(String playerName : joinedPlayers) {
             Player p = Bukkit.getPlayerExact(playerName);
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    int countdownTimer = startTimer - 1;
-                    p.sendMessage(prefix + ChatColor.WHITE + "Game starts in: " + countdownTimer);
-                    if(countdownTimer == 0) {
+                    startTimer[0] = startTimer[0] - 1;
+                    p.sendMessage(prefix + ChatColor.WHITE + "Game starts in: " + startTimer[0]);
+                    if(startTimer[0] == 0) {
                         this.cancel();
                     }
                 }
