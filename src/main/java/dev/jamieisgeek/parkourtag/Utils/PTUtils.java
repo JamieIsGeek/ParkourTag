@@ -27,6 +27,7 @@ public class PTUtils implements Listener {
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
     public static boolean inProgress = false;
+    public static Location arena = main.getConfig().getLocation("spawn-location");
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
         if(joinedPlayers.isEmpty()) {
@@ -60,37 +61,51 @@ public class PTUtils implements Listener {
         String playersJoined2 = playersJoined1.replace("]", "");
         String playersJoined = playersJoined2.replace(" ", ", ");
 
-        p.sendMessage(prefix + ChatColor.WHITE + playersJoined);
+        p.sendMessage(prefix + "There are: " + joinedPlayers.size() + " players in the queue!");
+        p.sendMessage(prefix + playersJoined);
     }
 
     public static void startGame() throws InterruptedException {
         if(joinedPlayers.size() > 1) {
-            /*
-            Teleport players to the arena - Don't start until 5 seconds after the hunter has been chosen!
-            */
+            if(arena == null) {
+                joinedPlayers.forEach((String playerName) -> {
+                    Player player = Bukkit.getPlayerExact(playerName);
+                    player.sendMessage(prefix + "There is no current arena spawn set!");
+                });
+            }
 
-            // Assigns the "Hunter" role to a random person from the players that have joined the game
+            joinedPlayers.forEach((String playerName) -> {
+                Player player = Bukkit.getPlayerExact(playerName);
+                player.sendMessage(prefix + "Teleporting...");
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                player.teleport(arena);
+            });
+
             int random = new Random().nextInt(joinedPlayers.size());
             String hunterBefore = joinedPlayers.get(random);
             Player hunter = Bukkit.getPlayerExact(hunterBefore);
             alivePlayers.remove(hunterBefore);
 
-            for (String joinedPlayer : joinedPlayers) {
-                if (joinedPlayer.equals(hunter.getDisplayName())) {
+            joinedPlayers.forEach((String playerName) -> {
+                if(playerName.equals(hunter.getDisplayName())) {
                     roles.put("Hunter", hunter.getDisplayName());
                 } else {
-                    roles.put(joinedPlayer, "Runner");
+                    roles.put(playerName, "Runner");
                 }
-            }
+            });
 
             // Create the scoreboard!
             int players = joinedPlayers.size() - 1;
             int minutes = 5;
-            int seconds = 0;
+            int seconds = 00;
             String timer = minutes + ":" + seconds;
-            for (String joinedPlayer : joinedPlayers) {
 
-                Player p = Bukkit.getPlayerExact(joinedPlayer);
+            joinedPlayers.forEach((String playerName) -> {
+                Player p = Bukkit.getPlayerExact(playerName);
 
                 if (p.getDisplayName().equals(roles.get("Hunter"))) {
                     ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -131,14 +146,13 @@ public class PTUtils implements Listener {
 
                     p.setScoreboard(scoreboard);
                 }
-            }
+            });
 
-            for (String playerName : joinedPlayers) {
+            joinedPlayers.forEach((String playerName) -> {
                 Player p = Bukkit.getPlayerExact(playerName);
+                p.sendMessage(ChatColor.WHITE + "Welcome to Parkour Tag!\n" + prefix + "This gamemode is simple, run from the hunter while doing parkour!\n" + prefix + "A random player has been declared as the 'Hunter' you must run away from them and not get hit!\n");
+            });
 
-                p.sendMessage(ChatColor.WHITE + "Welcome to Parkour Tag!\nThis gamemode is simple, run from the hunter while doing parkour!\nA random player has been declared as the 'Hunter' you must run away from them and not get hit!\n");
-
-            }
             TimeUnit.SECONDS.sleep(5);
             GameInProgress(inProgress);
         }

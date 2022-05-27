@@ -1,5 +1,6 @@
 package dev.jamieisgeek.parkourtag.Commands;
 
+import dev.jamieisgeek.parkourtag.Utils.PKTSetSpawn;
 import dev.jamieisgeek.parkourtag.Utils.PTUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,6 +64,10 @@ public class ParkourTagCommand implements CommandExecutor {
                     PTUtils.leaveQueue(prefix, p);
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.qleave");
+                }
+            } else if(args[0].equalsIgnoreCase("setspawn")) {
+                if(p.hasPermission("pkt.setspawn")) {
+                    PKTSetSpawn.SetPKTSpawn(p, prefix);
                 }
             }
 
