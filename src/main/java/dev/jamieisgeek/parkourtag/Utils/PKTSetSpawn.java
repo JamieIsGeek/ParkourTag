@@ -16,4 +16,12 @@ public class PKTSetSpawn {
 
         p.sendMessage(prefix + "Set game spawn to your location!");
     }
+
+    public static void SetPKTLobby(Player p, String prefix) {
+
+        Location location = p.getLocation();
+        main.getConfig().set("lobby-location", location);
+
+        p.sendMessage(prefix + "Set lobby spawn to your location!");
+    }
 }

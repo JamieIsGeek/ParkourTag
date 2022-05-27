@@ -68,6 +68,14 @@ public class ParkourTagCommand implements CommandExecutor {
             } else if(args[0].equalsIgnoreCase("setspawn")) {
                 if(p.hasPermission("pkt.setspawn")) {
                     PKTSetSpawn.SetPKTSpawn(p, prefix);
+                } else {
+                    p.sendMessage(prefix + "Missing Permission: pkt.setspawn");
+                }
+            } else if(args[0].equalsIgnoreCase("setlobby")) {
+                if(p.hasPermission("pkt.setlobby")) {
+                    PKTSetSpawn.SetPKTLobby(p, prefix);
+                } else {
+                    p.sendMessage(prefix + "Missing Permission: pkt.setlobby");
                 }
             }
 

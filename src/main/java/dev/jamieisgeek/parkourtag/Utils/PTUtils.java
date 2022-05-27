@@ -26,8 +26,8 @@ public class PTUtils implements Listener {
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
-    public static boolean inProgress = false;
     public static Location arena = main.getConfig().getLocation("spawn-location");
+    public static Location lobby = main.getConfig().getLocation("lobby-location");
     public static void joinGame(Player p, String prefix) throws InterruptedException {
 
         if(joinedPlayers.isEmpty()) {
@@ -154,13 +154,14 @@ public class PTUtils implements Listener {
             });
 
             TimeUnit.SECONDS.sleep(5);
-            GameInProgress(inProgress);
+            GameInProgress();
         }
     }
 
-    public static void GameInProgress(boolean inProgress) {
+    public static void GameInProgress() {
         final int[] startTimer = {6};
-        for(String playerName : joinedPlayers) {
+
+        joinedPlayers.forEach((String playerName) -> {
             Player p = Bukkit.getPlayerExact(playerName);
             new BukkitRunnable() {
                 @Override
@@ -174,35 +175,54 @@ public class PTUtils implements Listener {
             }.runTaskTimer(main, 0, 20);
 
             p.sendMessage(prefix + "RUN!");
-
-        }
+        });
     }
 
 
 
     public static void GameEnd() throws InterruptedException {
         for (String joinedPlayer : joinedPlayers) {
+
+        }
+
+        joinedPlayers.forEach((String playerName) -> {
             if (alivePlayers.size() > 0) {
-                Player p = Bukkit.getPlayerExact(joinedPlayer);
+                Player p = Bukkit.getPlayerExact(playerName);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
-                TimeUnit.SECONDS.sleep(2);
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 p.sendMessage(prefix + ChatColor.WHITE + "Runners win!");
-                TimeUnit.SECONDS.sleep((long) 1.5);
+                try {
+                    TimeUnit.SECONDS.sleep((long) 1.5);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
             } else {
-                Player p = Bukkit.getPlayerExact(joinedPlayer);
+                Player p = Bukkit.getPlayerExact(playerName);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
-                TimeUnit.SECONDS.sleep(2);
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 p.sendMessage(prefix + ChatColor.WHITE + "The Hunter wins!");
-                TimeUnit.SECONDS.sleep((long) 1.5);
+                try {
+                    TimeUnit.SECONDS.sleep((long) 1.5);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
-                // Teleport player back to the lobby!
+
             }
-        }
+        });
 
         joinedPlayers.clear();
         alivePlayers.clear();
