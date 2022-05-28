@@ -20,16 +20,52 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 public class PTUtils implements Listener {
 
+    public static int duration = 300;
+
+    public static String shortInteger(int duration) {
+
+        String string = "";
+        int minutes = 0;
+        int seconds = 0;
+
+        if (duration / 60 / 60 / 24 >= 1) {
+            duration -= duration / 60 / 60 / 24 * 60 * 60 * 24;
+        }
+
+        if (duration / 60 >= 1) {
+            minutes = duration / 60;
+            duration -= duration / 60 * 60;
+        }
+        if (duration >= 1)
+            seconds = duration;
+        if (minutes <= 9) {
+            string = String.valueOf(string) + "0" + minutes + ":";
+        } else {
+            string = String.valueOf(string) + minutes + ":";
+        }
+        if (seconds <= 9) {
+            string = String.valueOf(string) + "0" + seconds;
+        } else {
+            string = String.valueOf(string) + seconds;
+        }
+
+        return string;
+    }
+
     public static ArrayList<String> joinedPlayers = new ArrayList<>();
     public static ArrayList<String> alivePlayers = new ArrayList<>();
-    public Player hunter = null;
+    public static Player hunter = null;
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
     public static Location arena = main.getConfig().getLocation("spawn-location");
     public static Location lobby = main.getConfig().getLocation("lobby-location");
+    public boolean inProgress = false;
     public static void joinGame(Player p, String prefix) throws InterruptedException {
-
+        if(alivePlayers.size() > 1) {
+            p.sendMessage(prefix + "There is already a game in progress. Please wait for this game to end!");
+            return;
+        }
         if(joinedPlayers.isEmpty()) {
             joinedPlayers.add(p.getDisplayName());
             alivePlayers.add(p.getDisplayName());
@@ -117,7 +153,7 @@ public class PTUtils implements Listener {
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
                     Score emptyScore = objective.getScore("");
-                    Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + timer);
+                    Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + PTUtils.shortInteger(duration));
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
@@ -136,7 +172,7 @@ public class PTUtils implements Listener {
                     Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
                     Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
                     Score emptyScore = objective.getScore("");
-                    Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + timer);
+                    Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + PTUtils.shortInteger(duration));
 
                     roleScore.setScore(5);
                     hunterScore.setScore(4);
@@ -160,6 +196,7 @@ public class PTUtils implements Listener {
 
     public static void GameInProgress() {
         final int[] startTimer = {6};
+        int players = joinedPlayers.size() - 1;
 
         joinedPlayers.forEach((String playerName) -> {
             Player p = Bukkit.getPlayerExact(playerName);
@@ -175,15 +212,67 @@ public class PTUtils implements Listener {
             }.runTaskTimer(main, 0, 20);
 
             p.sendMessage(prefix + "RUN!");
+
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    if (p.getDisplayName().equals(roles.get("Hunter"))) {
+                        ScoreboardManager manager = Bukkit.getScoreboardManager();
+                        Scoreboard scoreboard = manager.getNewScoreboard();
+                        Objective objective = scoreboard.registerNewObjective("main", "dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+                        Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
+                        Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
+                        Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
+                        Score emptyScore = objective.getScore("");
+                        Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + PTUtils.shortInteger(duration));
+
+                        roleScore.setScore(5);
+                        hunterScore.setScore(4);
+                        inGameScore.setScore(3);
+                        emptyScore.setScore(2);
+                        timerScore.setScore(1);
+
+                        p.setScoreboard(scoreboard);
+                    } else {
+                        ScoreboardManager manager = Bukkit.getScoreboardManager();
+                        Scoreboard scoreboard = manager.getNewScoreboard();
+                        Objective objective = scoreboard.registerNewObjective("main", "dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
+                        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+                        Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
+                        Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
+                        Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
+                        Score emptyScore = objective.getScore("");
+                        Score timerScore = objective.getScore(ChatColor.RED + "Round Time: " + ChatColor.WHITE + PTUtils.shortInteger(duration));
+
+                        roleScore.setScore(5);
+                        hunterScore.setScore(4);
+                        inGameScore.setScore(3);
+                        emptyScore.setScore(2);
+                        timerScore.setScore(1);
+
+                        p.setScoreboard(scoreboard);
+                    }
+                    duration = duration - 1;
+                    if(duration == 0) {
+                        try {
+                            GameEnd();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }.runTaskTimer(main, 0, 20);
         });
+
     }
 
 
 
     public static void GameEnd() throws InterruptedException {
-        for (String joinedPlayer : joinedPlayers) {
-
-        }
 
         joinedPlayers.forEach((String playerName) -> {
             if (alivePlayers.size() > 0) {
@@ -220,7 +309,7 @@ public class PTUtils implements Listener {
                     throw new RuntimeException(e);
                 }
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
-
+                p.teleport(lobby);
             }
         });
 
@@ -232,7 +321,7 @@ public class PTUtils implements Listener {
         if(joinedPlayers.contains(p.getDisplayName())) {
             joinedPlayers.remove(p.getDisplayName());
 
-            if(alivePlayers.contains(p.getDisplayName())) {
+            if(alivePlayers.size() > 1) {
                 p.sendMessage(prefix + "You are unable to leave during a game!");
             } else {
                 p.sendMessage(prefix + "You left the queue!");
@@ -241,16 +330,19 @@ public class PTUtils implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
+    public void onPlayerQuit(PlayerQuitEvent e) throws InterruptedException {
         if(joinedPlayers.contains(e.getPlayer().getDisplayName())) {
             joinedPlayers.remove(e.getPlayer().getDisplayName());
             if(alivePlayers.contains(e.getPlayer().getDisplayName())) {
                 alivePlayers.remove(e.getPlayer().getDisplayName());
 
-                for (String joinedPlayer : joinedPlayers) {
-                    Player p = Bukkit.getPlayerExact(joinedPlayer);
-
+                joinedPlayers.forEach((String playerName) -> {
+                    Player p = Bukkit.getPlayerExact(playerName);
                     p.sendMessage(prefix + e.getPlayer().getDisplayName() + " has left the game!");
+                });
+
+                if(e.getPlayer().getDisplayName() == roles.get("Hunter")) {
+                    GameEnd();
                 }
             }
         }
@@ -279,47 +371,10 @@ public class PTUtils implements Listener {
                     fw.setFireworkMeta(fwm);
                     fw.detonate();
 
-
-                    for(int i = 0; i < joinedPlayers.size(); i++) {
-                        String playerName = joinedPlayers.get(i);
+                    joinedPlayers.forEach((String playerName) -> {
                         Player p = Bukkit.getPlayerExact(playerName);
-                        int players = joinedPlayers.size() - 1;
-
                         p.sendMessage(prefix + ChatColor.RED + attacked.getDisplayName() + ChatColor.WHITE + " has been " + ChatColor.BOLD + "" + ChatColor.RED + "eliminated" + ChatColor.stripColor("") + ChatColor.WHITE + "!");
-
-
-                        if(p.getDisplayName().equalsIgnoreCase(roles.get("Hunter"))) {
-                            ScoreboardManager manager = Bukkit.getScoreboardManager();
-                            Scoreboard scoreboard = manager.getNewScoreboard();
-                            Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
-                            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-                            Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
-                            Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
-                            Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Hunter");
-
-                            roleScore.setScore(5);
-                            hunterScore.setScore(4);
-                            inGameScore.setScore(3);
-
-                            p.setScoreboard(scoreboard);
-                        } else {
-                            ScoreboardManager manager = Bukkit.getScoreboardManager();
-                            Scoreboard scoreboard = manager.getNewScoreboard();
-                            Objective objective = scoreboard.registerNewObjective("main","dummy", ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "Parkour Tag");
-                            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-                            Score hunterScore = objective.getScore(ChatColor.RED + "Hunter: " + ChatColor.WHITE + hunter.getDisplayName());
-                            Score inGameScore = objective.getScore(ChatColor.RED + "Players: " + ChatColor.WHITE + alivePlayers.size() + "/" + players);
-                            Score roleScore = objective.getScore(ChatColor.RED + "Role: " + ChatColor.WHITE + "Runner");
-
-                            roleScore.setScore(5);
-                            hunterScore.setScore(4);
-                            inGameScore.setScore(3);
-
-                            p.setScoreboard(scoreboard);
-                        }
-                    }
+                    });
                 }
             }
         }

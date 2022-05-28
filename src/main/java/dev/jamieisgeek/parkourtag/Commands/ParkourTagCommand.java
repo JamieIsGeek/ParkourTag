@@ -1,5 +1,6 @@
 package dev.jamieisgeek.parkourtag.Commands;
 
+import dev.jamieisgeek.parkourtag.ParkourTag;
 import dev.jamieisgeek.parkourtag.Utils.PKTSetSpawn;
 import dev.jamieisgeek.parkourtag.Utils.PTUtils;
 import org.bukkit.Bukkit;
@@ -8,10 +9,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.logging.Logger;
 
+
 public class ParkourTagCommand implements CommandExecutor {
+    public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
@@ -20,7 +25,7 @@ public class ParkourTagCommand implements CommandExecutor {
             String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
 
             if(args.length != 1) {
-                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qleave | qlist]");
+                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qleave | qlist | start | end | setspawn | setlobby | reload]");
             } else if(args[0].equalsIgnoreCase("join")) {
                 try {
                     PTUtils.joinGame(p, prefix);
@@ -76,6 +81,12 @@ public class ParkourTagCommand implements CommandExecutor {
                     PKTSetSpawn.SetPKTLobby(p, prefix);
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.setlobby");
+                }
+            } else if(args[0].equalsIgnoreCase("reload")) {
+                if(p.hasPermission("pkt.reload")) {
+                    main.reloadConfig();
+                    main.getConfig();
+                    p.sendMessage(prefix + "Plugin config has been reloaded successfully and all changes have been applied!");
                 }
             }
 
