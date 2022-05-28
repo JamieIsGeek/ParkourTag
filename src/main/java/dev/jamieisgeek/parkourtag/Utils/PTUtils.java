@@ -57,7 +57,7 @@ public class PTUtils implements Listener {
     public static Player hunter = null;
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
-    public static Plugin main = ParkourTag.getProvidingPlugin(ParkourTag.class);
+    public static Plugin main = ParkourTag.getPlugin(ParkourTag.class);
     public static Location arena = main.getConfig().getLocation("spawn-location");
     public static Location lobby = main.getConfig().getLocation("lobby-location");
     public boolean inProgress = false;
