@@ -1,7 +1,7 @@
 package dev.jamieisgeek.parkourtag;
 
 import dev.jamieisgeek.parkourtag.Commands.ParkourTagCommand;
-import dev.jamieisgeek.parkourtag.Utils.PTUtils;
+import dev.jamieisgeek.parkourtag.Events.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +14,7 @@ public final class ParkourTag extends JavaPlugin {
     @Override
     public void onEnable() {
         getCommand("parkourtag").setExecutor(new ParkourTagCommand());
-        getServer().getPluginManager().registerEvents(new PTUtils(), this);
+        getServer().getPluginManager().registerEvents(new Events(), this);
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 

@@ -1,8 +1,7 @@
 package dev.jamieisgeek.parkourtag.Commands;
 
 import dev.jamieisgeek.parkourtag.ParkourTag;
-import dev.jamieisgeek.parkourtag.Utils.PKTSetSpawn;
-import dev.jamieisgeek.parkourtag.Utils.PTUtils;
+import dev.jamieisgeek.parkourtag.Utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,14 +27,14 @@ public class ParkourTagCommand implements CommandExecutor {
                 p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qleave | qlist | start | end | setspawn | setlobby | reload]");
             } else if(args[0].equalsIgnoreCase("join")) {
                 try {
-                    PTUtils.joinGame(p, prefix);
+                    JoinGame.joinGame(p, prefix);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
             } else if(args[0].equalsIgnoreCase("qlist")) {
                 if(p.hasPermission("pkt.qlist")) {
-                    PTUtils.listPlayers(prefix, p);
+                    ListPlayers.listPlayers(prefix, p);
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.qlist");
                 }
@@ -43,7 +42,7 @@ public class ParkourTagCommand implements CommandExecutor {
             } else if(args[0].equalsIgnoreCase("start")) {
                 if(p.hasPermission("pkt.forcestart")) {
                     try {
-                        PTUtils.startGame();
+                        BeginGame.startGame();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -55,7 +54,7 @@ public class ParkourTagCommand implements CommandExecutor {
             } else if(args[0].equalsIgnoreCase("end")) {
                 if(p.hasPermission("pkt.forceend")) {
                     try {
-                        PTUtils.GameEnd();
+                        EndGame.GameEnd();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -66,19 +65,18 @@ public class ParkourTagCommand implements CommandExecutor {
 
             } else if(args[0].equalsIgnoreCase("qleave")) {
                 if(p.hasPermission("pkt.qleave")) {
-                    PTUtils.leaveQueue(prefix, p);
+                    LeaveQueue.leaveQueue(prefix, p);
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.qleave");
                 }
-            } else if(args[0].equalsIgnoreCase("setspawn")) {
-                if(p.hasPermission("pkt.setspawn")) {
-                    PKTSetSpawn.SetPKTSpawn(p, prefix);
+            } else if(args[0].equalsIgnoreCase("setarena")) {
+                if(p.hasPermission("pkt.setarena")) {
                 } else {
-                    p.sendMessage(prefix + "Missing Permission: pkt.setspawn");
+                    p.sendMessage(prefix + "Missing Permission: pkt.setarena");
                 }
             } else if(args[0].equalsIgnoreCase("setlobby")) {
                 if(p.hasPermission("pkt.setlobby")) {
-                    PKTSetSpawn.SetPKTLobby(p, prefix);
+
                 } else {
                     p.sendMessage(prefix + "Missing Permission: pkt.setlobby");
                 }
