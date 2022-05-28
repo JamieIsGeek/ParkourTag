@@ -1,6 +1,7 @@
 package dev.jamieisgeek.parkourtag.Events;
 
 import dev.jamieisgeek.parkourtag.Utils.EndGame;
+import dev.jamieisgeek.parkourtag.Utils.Fireworks;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -38,7 +39,7 @@ public class Events implements Listener {
     }
 
     @EventHandler
-    public void onPlayerHit(EntityDamageByEntityEvent e) {
+    public void onPlayerHit(EntityDamageByEntityEvent e) throws InterruptedException {
         e.setCancelled(true);
 
         if(e.getDamager().getType() == EntityType.PLAYER) {
@@ -53,17 +54,17 @@ public class Events implements Listener {
                     Location deathLoc = attacked.getLocation();
 
 
-                    Firework fw = (Firework) deathLoc.getWorld().spawnEntity(deathLoc, EntityType.FIREWORK);
-                    FireworkMeta fwm = fw.getFireworkMeta();
-                    fwm.setPower(2);
-                    fwm.addEffect(FireworkEffect.builder().withColor(Color.LIME).flicker(true).build());
-                    fw.setFireworkMeta(fwm);
-                    fw.detonate();
-
+                    FireworkEffect fireworkEffect = FireworkEffect.builder().flicker(false).trail(true).with(FireworkEffect.Type.BALL).withColor(Color.ORANGE).withFade(Color.RED).build();
+                    Location location = attacked.getLocation();
+                    new Fireworks().InstantFirework(fireworkEffect, location);
                     joinedPlayers.forEach((String playerName) -> {
                         Player p = Bukkit.getPlayerExact(playerName);
                         p.sendMessage(prefix + ChatColor.RED + attacked.getDisplayName() + ChatColor.WHITE + " has been " + ChatColor.BOLD + "" + ChatColor.RED + "eliminated" + ChatColor.stripColor("") + ChatColor.WHITE + "!");
                     });
+
+                    if(alivePlayers.size() == 0) {
+                        EndGame.GameEnd();
+                    }
                 }
             }
         }
