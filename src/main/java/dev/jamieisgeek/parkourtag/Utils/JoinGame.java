@@ -10,7 +10,7 @@ import static dev.jamieisgeek.parkourtag.Utils.PTUtils.*;
 public class JoinGame {
 
     public static void joinGame(Player p, String prefix) throws InterruptedException {
-        if(alivePlayers.size() > 1) {
+        if(inProgress == true) {
             p.sendMessage(prefix + "There is already a game in progress. Please wait for this game to end!");
             return;
         }

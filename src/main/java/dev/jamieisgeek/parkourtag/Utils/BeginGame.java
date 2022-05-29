@@ -17,6 +17,7 @@ public class BeginGame {
             joinedPlayers.forEach((String playerName) -> {
                 Player player = Bukkit.getPlayerExact(playerName);
                 player.sendMessage(prefix + "Teleporting...");
+                //player.teleport();
                 try {
                     TimeUnit.SECONDS.sleep(2);
                 } catch (InterruptedException e) {
@@ -40,9 +41,6 @@ public class BeginGame {
 
             // Create the scoreboard!
             int players = joinedPlayers.size() - 1;
-            int minutes = 5;
-            int seconds = 00;
-            String timer = minutes + ":" + seconds;
 
             joinedPlayers.forEach((String playerName) -> {
                 Player p = Bukkit.getPlayerExact(playerName);
@@ -90,10 +88,16 @@ public class BeginGame {
 
             joinedPlayers.forEach((String playerName) -> {
                 Player p = Bukkit.getPlayerExact(playerName);
-                p.sendMessage(ChatColor.WHITE + "Welcome to Parkour Tag!\n" + prefix + "This gamemode is simple, run from the hunter while doing parkour!\n" + prefix + "A random player has been declared as the 'Hunter' you must run away from them and not get hit!\n");
+                p.sendMessage(prefix + "Welcome to Parkour Tag!\n" + prefix + "This gamemode is simple, run from the hunter while doing parkour!\n" + prefix + "A random player has been declared as the 'Hunter' you must run away from them and not get hit!\n");
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                p.sendMessage(prefix + "The game will start shortly");
             });
 
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(2);
             GameInProgress.GameInProgress();
         }
     }

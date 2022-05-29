@@ -13,6 +13,8 @@ public class EndGame {
 
     public static void GameEnd() throws InterruptedException {
 
+        inProgress = false;
+
         joinedPlayers.forEach((String playerName) -> {
             if (alivePlayers.size() > 0) {
                 Player p = Bukkit.getPlayerExact(playerName);
@@ -55,5 +57,6 @@ public class EndGame {
 
         joinedPlayers.clear();
         alivePlayers.clear();
+        roles.clear();
     }
 }

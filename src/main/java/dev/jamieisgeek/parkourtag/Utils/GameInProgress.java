@@ -22,12 +22,14 @@ public class GameInProgress {
                     Player p = Bukkit.getPlayerExact(playerName);
                     p.sendMessage(prefix + ChatColor.WHITE + "Game starts in: " + startTimer[0]);
                     if(startTimer[0] == 1) {
-                        this.cancel();
                         p.sendMessage(prefix + "Run!");
+                        this.cancel();
                     }
                 });
             }
         }.runTaskTimer(main, 0, 20);
+
+        inProgress = true;
 
         new BukkitRunnable() {
 
@@ -35,11 +37,16 @@ public class GameInProgress {
             public void run() {
                 duration = duration - 1;
                 if(duration == 0) {
+
                     try {
                         EndGame.GameEnd();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+                }
+
+                if(inProgress == false) {
+                    this.cancel();
                 }
 
                 joinedPlayers.forEach((String playerName) -> {

@@ -48,4 +48,5 @@ public class PTUtils implements Listener {
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getPlugin(ParkourTag.class);
+    public static boolean inProgress = false;
 }
