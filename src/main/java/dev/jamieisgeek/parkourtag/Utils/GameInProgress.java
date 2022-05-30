@@ -26,9 +26,12 @@ public class GameInProgress {
                         p.sendMessage(prefix + "Run!");
                         this.cancel();
                         inProgress = true;
-                        ScoreUpdate.updateScoreboard();
                     }
                 });
+
+                if(startTimer[0] == 1) {
+                    ScoreUpdate.updateScoreboard();
+                }
             }
         }.runTaskTimer(main, 0, 20);
     }
