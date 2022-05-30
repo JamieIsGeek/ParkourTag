@@ -24,7 +24,7 @@ public class ParkourTagCommand implements CommandExecutor {
             String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD.toString() + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
 
             if(args.length != 1) {
-                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qleave | qlist | start | end | setspawn | setlobby | reload]");
+                p.sendMessage(prefix + ChatColor.WHITE + "Invalid Arguments. /pkt [join | start | end | qleave | qlist | setspawn | setlobby | reload]");
             } else if(args[0].equalsIgnoreCase("join")) {
                 try {
                     JoinGame.joinGame(p, prefix);

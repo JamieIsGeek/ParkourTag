@@ -15,8 +15,6 @@ public final class ParkourTag extends JavaPlugin {
     public void onEnable() {
         getCommand("parkourtag").setExecutor(new ParkourTagCommand());
         getServer().getPluginManager().registerEvents(new Events(), this);
-        getConfig().options().copyDefaults();
-        saveDefaultConfig();
 
         logger.info("");
         logger.info("=+=+=+=+=+=+=+=+=+=+=+=+=+=");

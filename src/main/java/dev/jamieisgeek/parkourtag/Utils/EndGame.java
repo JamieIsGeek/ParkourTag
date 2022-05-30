@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static dev.jamieisgeek.parkourtag.Utils.PTUtils.*;
@@ -15,9 +16,9 @@ public class EndGame {
 
         inProgress = false;
 
-        joinedPlayers.forEach((String playerName) -> {
+        joinedPlayers.forEach((UUID id) -> {
             if (alivePlayers.size() > 0) {
-                Player p = Bukkit.getPlayerExact(playerName);
+                Player p = Bukkit.getPlayer(id);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
@@ -34,7 +35,7 @@ public class EndGame {
                 }
                 p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
             } else {
-                Player p = Bukkit.getPlayerExact(playerName);
+                Player p = Bukkit.getPlayer(id);
                 p.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
 
                 p.sendMessage(prefix + ChatColor.WHITE + "Game Over!");
@@ -49,14 +50,14 @@ public class EndGame {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                p.sendMessage(prefix + ChatColor.WHITE + "Returning to lobby!");
-                //Location lobby = new Location(0, 0, 0);
-                //p.teleport(lobby);
             }
         });
 
+        TimeUnit.SECONDS.sleep((long) 1.5);
         joinedPlayers.clear();
+        TimeUnit.SECONDS.sleep((long) 0.6);
         alivePlayers.clear();
+        TimeUnit.SECONDS.sleep((long) 0.6);
         roles.clear();
     }
 }

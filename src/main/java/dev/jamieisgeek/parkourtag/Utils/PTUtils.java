@@ -8,6 +8,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
+
 public class PTUtils implements Listener {
 
     public static int duration = 300;
@@ -42,11 +44,11 @@ public class PTUtils implements Listener {
         return string;
     }
 
-    public static ArrayList<String> joinedPlayers = new ArrayList<>();
-    public static ArrayList<String> alivePlayers = new ArrayList<>();
-    public static Player hunter = null;
+    public static ArrayList<UUID> joinedPlayers = new ArrayList<>();
+    public static ArrayList<UUID> alivePlayers = new ArrayList<>();
     public static HashMap<String, String> roles = new HashMap<>();
     public static String prefix = ChatColor.WHITE + "[" + ChatColor.DARK_GREEN + ChatColor.BOLD + "ParkourTag" + ChatColor.RESET + ChatColor.WHITE + "] ";
     public static Plugin main = ParkourTag.getPlugin(ParkourTag.class);
     public static boolean inProgress = false;
+    public static Player hunter;
 }

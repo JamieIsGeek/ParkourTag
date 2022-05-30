@@ -8,8 +8,8 @@ import static dev.jamieisgeek.parkourtag.Utils.PTUtils.joinedPlayers;
 public class LeaveQueue {
 
     public static void leaveQueue(String prefix, Player p) {
-        if(joinedPlayers.contains(p.getDisplayName())) {
-            joinedPlayers.remove(p.getDisplayName());
+        if(joinedPlayers.contains(p.getUniqueId())) {
+            joinedPlayers.remove(p.getUniqueId());
 
             if(alivePlayers.size() > 1) {
                 p.sendMessage(prefix + "You are unable to leave during a game!");
